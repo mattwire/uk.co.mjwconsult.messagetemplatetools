@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/admin/messageTemplates/preview</path>
+    <page_callback>CRM_Messagetemplatetools_Form_Preview</page_callback>
+    <title>Preview</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
