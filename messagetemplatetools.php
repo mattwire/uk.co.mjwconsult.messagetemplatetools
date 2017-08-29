@@ -130,30 +130,23 @@ function messagetemplatetools_civicrm_pageRun(&$page) {
   }
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
+/* Example usage
+function messagetemplatetools_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+  //create a Send Invoice link with the context of the participant's order ID (a custom participant field)
+  switch ($objectName) {
+    case 'Participant':
+      switch ($op) {
+        case 'participant.selector.row':
+          $cid = $values['cid'];
 
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function messagetemplatetools_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
-function messagetemplatetools_civicrm_navigationMenu(&$menu) {
-  _messagetemplatetools_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => E::ts('The Page'),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _messagetemplatetools_civix_navigationMenu($menu);
-} // */
+          $links[] = array(
+            'name' => ts('Send Invoice'),
+            'title' => ts('Send Invoice'),
+            'url' => 'civicrm/activity/pdf/printsingle',
+            'qs' => "action=add&reset=1&cid=$cid&selectedChild=activity&wfid=818",
+          );
+          break;
+      }
+  }
+}
+*/
