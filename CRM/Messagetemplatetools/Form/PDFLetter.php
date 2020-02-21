@@ -55,8 +55,8 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
   public function preProcess() {
 
     $this->skipOnHold = $this->skipDeceased = FALSE;
-    $messageText = array();
-    $messageSubject = array();
+    $messageText = [];
+    $messageSubject = [];
     $dao = new CRM_Core_BAO_MessageTemplate();
     $dao->is_active = 1;
     $dao->find();
@@ -81,23 +81,23 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
     $this->_wfid = CRM_Utils_Request::retrieve('wfid', 'Positive', $this, FALSE);
     // If workflow id not specified, try by message template Id (user templates don't have workflow id)
     if (!empty($this->_wfid)) {
-      $template = civicrm_api3('MessageTemplate', 'get', array('workflow_id' => $this->_wfid, 'return' => array('id', 'msg_subject')));
+      $template = civicrm_api3('MessageTemplate', 'get', ['workflow_id' => $this->_wfid, 'return' => ['id', 'msg_subject']]);
       $this->_mtid=$template['id'];
     }
     else {
       $this->_mtid = CRM_Utils_Request::retrieve('mtid', 'Positive', $this, FALSE);
     }
     try {
-      $this->_msgTemplate = civicrm_api3('MessageTemplate', 'getsingle', array(
+      $this->_msgTemplate = civicrm_api3('MessageTemplate', 'getsingle', [
         'id' => $this->_mtid,
-        'return' => array(
+        'return' => [
           'id',
           'msg_subject',
           'msg_title',
           'msg_html',
           'msg_text'
-        )
-      ));
+        ]
+      ]);
     }
     catch (Exception $e) {
       CRM_Core_Error::statusBounce('Could not find a valid messagetemplate with id: ' . $this->_mtid);
@@ -106,9 +106,9 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
     $this->assign('title', $this->_msgTemplate['msg_title']);
 
     if ($cid) {
-      $this->_contactIds = array($cid);
+      $this->_contactIds = [$cid];
       // put contact display name in title for single contact mode
-      CRM_Utils_System::setTitle(ts('Print Letter for %1', array(1 => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $cid, 'display_name'))));
+      CRM_Utils_System::setTitle(ts('Print Letter for %1', [1 => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $cid, 'display_name')]));
       $this->_single = TRUE;
       $this->_cid = $cid;
     }
@@ -145,25 +145,25 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
       'text',
       'subject',
       ts('Activity Subject'),
-      array('size' => 45, 'maxlength' => 255),
+      ['size' => 45, 'maxlength' => 255],
       FALSE
     );
 
-    $this->add('static', 'pdf_format_header', NULL, ts('Page Format: %1', array(1 => '<span class="pdf-format-header-label"></span>')));
-    $this->addSelect('format_id', array(
+    $this->add('static', 'pdf_format_header', NULL, ts('Page Format: %1', [1 => '<span class="pdf-format-header-label"></span>']));
+    $this->addSelect('format_id', [
       'label' => ts('Select Format'),
       'placeholder' => ts('Default'),
       'entity' => 'message_template',
       'field' => 'pdf_format_id',
       'option_url' => 'civicrm/admin/pdfFormats',
-    ));
+    ]);
     $this->add(
       'select',
       'paper_size',
       ts('Paper Size'),
-      array(0 => ts('- default -')) + CRM_Core_BAO_PaperSize::getList(TRUE),
+      [0 => ts('- default -')] + CRM_Core_BAO_PaperSize::getList(TRUE),
       FALSE,
-      array('onChange' => "selectPaper( this.value ); showUpdateFormatChkBox();")
+      ['onChange' => "selectPaper( this.value ); showUpdateFormatChkBox();"]
     );
     $this->add('static', 'paper_dimensions', NULL, ts('Width x Height'));
     $this->add(
@@ -172,7 +172,7 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
       ts('Orientation'),
       CRM_Core_BAO_PdfFormat::getPageOrientations(),
       FALSE,
-      array('onChange' => "updatePaperDimensions(); showUpdateFormatChkBox();")
+      ['onChange' => "updatePaperDimensions(); showUpdateFormatChkBox();"]
     );
     $this->add(
       'select',
@@ -180,34 +180,34 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
       ts('Unit of Measure'),
       CRM_Core_BAO_PdfFormat::getUnits(),
       FALSE,
-      array('onChange' => "selectMetric( this.value );")
+      ['onChange' => "selectMetric( this.value );"]
     );
     $this->add(
       'text',
       'margin_left',
       ts('Left Margin'),
-      array('size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"),
+      ['size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"],
       TRUE
     );
     $this->add(
       'text',
       'margin_right',
       ts('Right Margin'),
-      array('size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"),
+      ['size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"],
       TRUE
     );
     $this->add(
       'text',
       'margin_top',
       ts('Top Margin'),
-      array('size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"),
+      ['size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"],
       TRUE
     );
     $this->add(
       'text',
       'margin_bottom',
       ts('Bottom Margin'),
-      array('size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"),
+      ['size' => 8, 'maxlength' => 8, 'onkeyup' => "showUpdateFormatChkBox();"],
       TRUE
     );
 
@@ -228,29 +228,29 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
     $this->add('hidden', 'html_message');
     $this->add('hidden', 'participant_id');
 
-    $buttons = array();
+    $buttons = [];
     if ($this->get('action') != CRM_Core_Action::VIEW) {
-      $buttons[] = array(
+      $buttons[] = [
         'type' => 'upload',
         'name' => ts('Download Document'),
         'isDefault' => TRUE,
         'icon' => 'fa-download',
-      );
-      $buttons[] = array(
+      ];
+      $buttons[] = [
         'type' => 'submit',
         'name' => ts('Preview'),
         'subName' => 'preview',
         'icon' => 'fa-search',
         'isDefault' => FALSE,
-      );
+      ];
     }
-    $buttons[] = array(
+    $buttons[] = [
       'type' => 'cancel',
       'name' => $this->get('action') == CRM_Core_Action::VIEW ? ts('Done') : ts('Cancel'),
-    );
+    ];
     $this->addButtons($buttons);
 
-    $this->addFormRule(array('CRM_Contact_Form_Task_PDFLetterCommon', 'formRule'), $this);
+    $this->addFormRule(['CRM_Contact_Form_Task_PDFLetterCommon', 'formRule'], $this);
   }
 
   /**
@@ -273,7 +273,7 @@ class CRM_Messagetemplatetools_Form_PDFLetter extends CRM_Contact_Form_Task {
    *   TRUE if no errors, else array of errors.
    */
   public static function formRule($fields, $files, $self) {
-    $errors = array();
+    $errors = [];
 
     if (!is_numeric($fields['margin_left'])) {
       $errors['margin_left'] = 'Margin must be numeric';

@@ -29,25 +29,25 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
 
     $elements[] = $this->addEntityRef('contact_id', ts('Select Contact'));
     // Select events instead of contacts - set minimumInputLength to 0 to display results immediately without waiting for search input
-    $elements[] = $this->addEntityRef('eventid', ts('Select Event'), array(
+    $elements[] = $this->addEntityRef('eventid', ts('Select Event'), [
       'entity' => 'event',
       'placeholder' => ts('- Select Event -'),
-      'select' => array('minimumInputLength' => 0),
-    ));
-    $elements[] = $this->addEntityRef('mailing_id', ts('Select Contact'), array('entity' => 'mailing'));
+      'select' => ['minimumInputLength' => 0],
+    ]);
+    $elements[] = $this->addEntityRef('mailing_id', ts('Select Contact'), ['entity' => 'mailing']);
 
     if (!empty($this->id)) {
-      $this->templateParams = array(
+      $this->templateParams = [
         'messageTemplateID' => $this->id,
         'abortMailSend' => TRUE,
-      );
+      ];
       // Get contactId
       if (!empty($this->cid)) {
         try {
-          $contactDetails = civicrm_api3('Contact', 'getsingle', array('id' => $this->cid));
+          $contactDetails = civicrm_api3('Contact', 'getsingle', ['id' => $this->cid]);
         }
         catch (Exception $e) {
-          $contactDetails = array();
+          $contactDetails = [];
         }
         $this->templateParams['tplParams']['contact'] = $contactDetails;
         $this->templateParams['tplParams']['email'] = $contactDetails['email'];
@@ -59,10 +59,10 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
       // Get event details
       if (!empty($this->eid)) {
         try {
-          $eventDetails = civicrm_api3('Event', 'getsingle', array('id' => $this->eid));
+          $eventDetails = civicrm_api3('Event', 'getsingle', ['id' => $this->eid]);
         }
         catch (Exception $e) {
-          $eventDetails = array();
+          $eventDetails = [];
         }
         $this->templateParams['tplParams']['event'] = $eventDetails;
       }
@@ -80,13 +80,13 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
       $rendered['text'] = self::renderText($rendered['text']);
       $this->assign('renderedMail', $rendered);
     }
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => E::ts('Submit'),
         'isDefault' => TRUE,
-      ),
-    ));
+      ],
+    ]);
 
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames($elements));
@@ -95,7 +95,7 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
   }
 
   public static function getTokens($params) {
-    $mailContent = civicrm_api3('MessageTemplate', 'getsingle', array('id' => $params['messageTemplateID']));
+    $mailContent = civicrm_api3('MessageTemplate', 'getsingle', ['id' => $params['messageTemplateID']]);
     /*
      *'subject' => $dao->subject,
      *'text' => $dao->text,
@@ -190,10 +190,10 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
 
   public function getMessageTemplates() {
     // We need msg_subject to filter out undefined templates (eg. if using default workflow template)
-    $result = civicrm_api3('MessageTemplate', 'get', array(
-      'return' => array("id", "msg_title", "msg_subject", "workflow_id", "is_default"),
-      'options' => array('limit' => 0, 'sort' => 'msg_title ASC'),
-    ));
+    $result = civicrm_api3('MessageTemplate', 'get', [
+      'return' => ["id", "msg_title", "msg_subject", "workflow_id", "is_default"],
+      'options' => ['limit' => 0, 'sort' => 'msg_title ASC'],
+    ]);
     foreach ($result['values'] as $id => $data) {
       if (CRM_Utils_Array::value('workflow_id', $data) && !$data['is_default']) {
         continue;
@@ -221,7 +221,7 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
     // auto-rendered in the loop -- such as "qfKey" and "buttons".  These
     // items don't have labels.  We'll identify renderable by filtering on
     // the 'label'.
-    $elementNames = array();
+    $elementNames = [];
     foreach ($elements as $element) {
       /** @var HTML_QuickForm_Element $element */
       $label = $element->getLabel();
@@ -242,8 +242,8 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
    *   array of tokens mentioned in field
    */
   public static function getSmartyTokens($string) {
-    $matches = array();
-    $tokens = array();
+    $matches = [];
+    $tokens = [];
     preg_match_all('/(\$\w+[\.\w+]*)/',
       $string,
       $matches,
