@@ -129,24 +129,3 @@ function messagetemplatetools_civicrm_pageRun(&$page) {
     CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/previewButton.js');
   }
 }
-
-/* Example usage
-function messagetemplatetools_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
-  //create a Send Invoice link with the context of the participant's order ID (a custom participant field)
-  switch ($objectName) {
-    case 'Participant':
-      switch ($op) {
-        case 'participant.selector.row':
-          $cid = $values['cid'];
-
-          $links[] = array(
-            'name' => ts('Send Invoice'),
-            'title' => ts('Send Invoice'),
-            'url' => 'civicrm/activity/pdf/printsingle',
-            'qs' => "action=add&reset=1&cid=$cid&selectedChild=activity&wfid=818",
-          );
-          break;
-      }
-  }
-}
-*/

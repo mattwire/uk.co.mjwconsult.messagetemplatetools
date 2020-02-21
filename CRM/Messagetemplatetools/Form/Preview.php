@@ -39,6 +39,7 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
     if (!empty($this->id)) {
       $this->templateParams = array(
         'messageTemplateID' => $this->id,
+        'abortMailSend' => TRUE,
       );
       // Get contactId
       if (!empty($this->cid)) {
@@ -75,7 +76,7 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
       $this->assign('tokenElements', $this->getRenderableElementNames($this->tokenElements));
 
       $this->setDefaultValues();
-      list($sent, $rendered['subject'], $rendered['text'], $rendered['html']) = CRM_Core_BAO_MessageTemplate::sendTemplate($this->templateParams,FALSE);
+      list($sent, $rendered['subject'], $rendered['text'], $rendered['html']) = CRM_Core_BAO_MessageTemplate::sendTemplate($this->templateParams);
       $rendered['text'] = self::renderText($rendered['text']);
       $this->assign('renderedMail', $rendered);
     }
@@ -110,8 +111,11 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
     $tokens['tokens']['text'] = CRM_Utils_Array::crmArrayUnique($civiTokens['text']);
     $tokens['tokens']['html'] = CRM_Utils_Array::crmArrayUnique($civiTokens['html']);
     $tokens['smarty']['subject'] = self::getSmartyTokens(CRM_Utils_Array::value('msg_subject', $mailContent));
+    natcasesort($tokens['smarty']['subject']);
     $tokens['smarty']['text'] = self::getSmartyTokens(CRM_Utils_Array::value('msg_text', $mailContent));
+    natcasesort($tokens['smarty']['text']);
     $tokens['smarty']['html'] = self::getSmartyTokens(CRM_Utils_Array::value('msg_html', $mailContent));
+    natcasesort($tokens['smarty']['html']);
     return $tokens;
   }
 
@@ -188,9 +192,12 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
     // We need msg_subject to filter out undefined templates (eg. if using default workflow template)
     $result = civicrm_api3('MessageTemplate', 'get', array(
       'return' => array("id", "msg_title", "msg_subject", "workflow_id", "is_default"),
-      'options' => array('limit' => 0),
+      'options' => array('limit' => 0, 'sort' => 'msg_title ASC'),
     ));
     foreach ($result['values'] as $id => $data) {
+      if (CRM_Utils_Array::value('workflow_id', $data) && !$data['is_default']) {
+        continue;
+      }
       $msgTitle = !empty($data['msg_title']) ? $data['msg_title'] : '- no title -';
       if (!empty($data['workflow_id'])) {
         $msgTitle .= ' (workflow) ';
@@ -198,6 +205,7 @@ class CRM_Messagetemplatetools_Form_Preview extends CRM_Core_Form {
       if ($data['is_default']) {
         $msgTitle .= ' (default) ';
       }
+      $msgTitle .= " [id: {$id}]";
       $options[$id] = $msgTitle;
     }
     return $options;
