@@ -9,6 +9,11 @@ use CRM_Messagetemplatetools_ExtensionUtil as E;
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
 function messagetemplatetools_civicrm_config(&$config) {
+  if (isset(Civi::$statics[__FUNCTION__])) { return; }
+  Civi::$statics[__FUNCTION__] = 1;
+
+  Civi::dispatcher()->addListener('civi.smarty.error', 'messagetemplatetools_civicrm_civiSmartyError');
+
   _messagetemplatetools_civix_civicrm_config($config);
 }
 
