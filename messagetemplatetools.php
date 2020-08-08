@@ -134,3 +134,26 @@ function messagetemplatetools_civicrm_pageRun(&$page) {
     CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/previewButton.js');
   }
 }
+
+/**
+ * @param \Civi\Core\Event\SmartyErrorEvent $event
+ */
+function messagetemplatetools_civicrm_civiSmartyError($event) {
+  \Civi::log()->error('Smarty Error: ' . $event->errorMsg);
+}
+
+function messagetemplatetools_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+  if ($objectName == 'Mailing' && ($op == 'view.mailing.browse.scheduled' || $op == 'view.mailing.browse.unscheduled')) {
+    $links[] = [
+      'name'  => ts('Live Preview'),
+      'url'   => CRM_Utils_System::url('civicrm/mailings/live-preview', "mid=$objectId"),
+      'title' => 'Live Preview',
+    ];
+  }
+}
+
+//set API permissions for various API calls (otherwise needs 'administer CiviCRM')
+function messagetemplatetools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  $permissions['mailingspreview']['getrecipients'] = array('access CiviCRM');
+  $permissions['mailingspreview']['getmailing'] = array('access CiviCRM');
+}

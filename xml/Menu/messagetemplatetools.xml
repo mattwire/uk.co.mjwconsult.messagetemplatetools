@@ -12,4 +12,16 @@
     <title>PDF Letter</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/mailings/live-preview</path>
+    <page_callback>CRM_Messagetemplatetools_Page_PreviewMailing</page_callback>
+    <title>PreviewMailing</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/mailings/live-preview/tokenslist</path>
+    <page_callback>CRM_Messagetemplatetools_Page_Listoftokens</page_callback>
+    <title>Listoftokens</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>
