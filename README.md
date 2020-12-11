@@ -1,3 +1,5 @@
+# Moved to https://lab.civicrm.org/extensions/msgtpltools
+
 # messagetemplatetools
 
 Adds a message template preview to the message template admin page and a print letter form.
